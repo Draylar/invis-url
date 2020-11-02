@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="nav">
+        <a href="https://github.com/Draylar/invis-url"><img src="assets/github-brands.svg" alt="GitHub Icon"class="icon"></a>
+    </div>
+
+    <!-- Main Centered Div with primary Content Inside -->
+    <div class="content">
+        <h5 class="title" id="primary-title">Make your link invisible</h5>
+
+        <div class="interact" id="primary-interact">
+            <!-- Input Box -->
+            <input type="text" class="input" id="primary-input" placeholder="Start typing any URL here...">
+
+            <div class="url-information" id="primary-url-information">
+                <!-- Output URL -->
+                <p class="details-label">Your URL</p>
+                <input type="text" class="result" id="primary-result">
+                <button class="copy" id="primary-copy">Copy</button>
+
+                <!-- Statistics on Output URL -->
+                <p class="details-label">Statistics</p>
+                <p class="statistics-data" id="url-characters">URL Characters:</p>
+                <p class="statistics-data" id="change-percentage">Change Percentage:</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Load JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>
