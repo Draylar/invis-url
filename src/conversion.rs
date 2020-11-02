@@ -110,6 +110,7 @@ mod tests {
 
     #[test]
     fn test_binary_to_string() {
+        assert_eq!(binary_to_string("1100111 1101111 1101111 1100111 1101100 1100101 101110 1100011 1101111 1101101".to_string()), "google.com");
         assert_eq!(binary_to_string("01001000 01100101 01101100 01101100 01101111".to_string()), "Hello");
         assert_eq!(binary_to_string("01001000".to_string()), "H");
         assert_eq!(binary_to_string("0100000".to_string()), " ");

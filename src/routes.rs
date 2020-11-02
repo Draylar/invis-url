@@ -1,9 +1,44 @@
-use rocket::{post, get, response::Redirect};
+use rocket::{get, post, response::Redirect};
+use rocket::response::NamedFile;
 use rocket_contrib::json::Json;
+use serde::{Deserialize, Serialize};
 
-use crate::conversion::{ConversionData, invisible_to_url};
-use crate::conversion::url_to_invisible;
-use rocket::http::uri::Uri;
+use crate::conversion::{ConversionData, invisible_to_url, url_to_invisible};
+
+#[derive(Serialize, Deserialize)]
+pub struct ConversionResponse {
+    result: String
+}
+
+#[get("/")]
+pub fn root() -> Option<NamedFile> {
+    NamedFile::open("public/index.html").ok()
+}
+
+#[get("/index.html")]
+pub fn index() -> Option<NamedFile> {
+    NamedFile::open("public/index.html").ok()
+}
+
+#[get("/script.js")]
+pub fn script() -> Option<NamedFile> {
+    NamedFile::open("public/script.js").ok()
+}
+
+#[get("/style.css")]
+pub fn style() -> Option<NamedFile> {
+    NamedFile::open("public/style.css").ok()
+}
+
+#[get("/assets/github-brands.svg")]
+pub fn github() -> Option<NamedFile> {
+    NamedFile::open("public/assets/github-brands.svg").ok()
+}
+
+#[get("/api")]
+pub fn api_root() -> String {
+    "You have reached the invis-url API.".to_string()
+}
 
 /// POST route for converting a URL to invis-url format.
 ///
@@ -13,21 +48,26 @@ use rocket::http::uri::Uri;
 ///     "url": "https://google.com"
 /// }
 /// ```
-#[post("/convert", format = "json", data = "<input>")]
-pub fn convert(input: Json<ConversionData>) -> String {
-    format!("Hello, {:?}!", url_to_invisible(input.url.clone()))
+#[post("/api/convert", format = "json", data = "<input>")]
+pub fn convert(input: Json<ConversionData>) -> Json<ConversionResponse> {
+    let v = ConversionResponse {
+        result: url_to_invisible(input.url.clone())
+    };
+
+    Json(v)
 }
 
-#[get("/<data>")]
+/// Primary route for redirecting invisible URLs to standard URLs.
+#[get("/<data>", rank = 11)] // StaticFiles rank defaults to 10, set to 11 for lower priority
 pub fn get(data: String) -> Redirect {
-    let url = invisible_to_url(data);
-    Redirect::to(Uri::parse(string_to_static_str(url)).expect("Valid URI"))
-}
+    let mut url = invisible_to_url(data);
 
-#[get("/")]
-pub fn root() -> &'static str {
-    "You have reached the invis-url API.\
-    \nFor more information on usage, visit https://github.com/Draylar/invis-url."
+    // If the link does not start with http:// or https://, add it as a prefix to avoid redirecting to same domain
+    if !url.starts_with("http://") && !url.starts_with("https://") {
+        url = "https://".to_string() + &url;
+    }
+
+    Redirect::to(string_to_static_str(url))
 }
 
 // https://stackoverflow.com/questions/23975391/how-to-convert-a-string-into-a-static-str
